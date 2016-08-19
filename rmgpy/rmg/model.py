@@ -1460,13 +1460,9 @@ class CoreEdgeReactionModel:
         # direction from the list of core reactions
         # Note that well-skipping reactions may not have a reverse if the well
         # that they skip over is not itself in the core
-        for network in updatedNetworks:
-            for reaction in network.netReactions:
-                try:
-                    index = self.core.reactions.index(reaction)
-                except ValueError:
-                    continue
-                for index2, reaction2 in enumerate(self.core.reactions):
+        for index, reaction in enumerate(self.core.reactions):
+            if isinstance(reaction, PDepReaction):
+                for reaction2 in self.core.reactions[index+1:]:
                     if isinstance(reaction2, PDepReaction) and reaction.reactants == reaction2.products and reaction.products == reaction2.reactants:
                         # We've found the PDepReaction for the reverse direction
                         dGrxn = reaction.getFreeEnergyOfReaction(300.)
